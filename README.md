@@ -12,6 +12,7 @@ app folder auth folder,  Share/ui folder and tabview folder
 and tabview child folder as home, about, portfolio, contact
 share/ui folder which is use common for Action bar
 actionbar component ts file
+
 <ActionBar [title]="title" class="actionbar">
     <NavigationButton text="Back"
                      *ngIf="canGoBack"  
@@ -25,10 +26,13 @@ actionbar component ts file
 *note: onGoback function which can back and condition cangoBAck is for parent component not show back button or icon
 
 and action bar component ts file 
+
  @Input() title: string;
  @Input() showBackButton = true;
+ 
 construction add RouterExtensions
 ngOnInit add 
+
 get canGoBack() {
     return this.router.canGoBack() && this.showBackButton;
     }
@@ -37,7 +41,8 @@ get canGoBack() {
         this.router.back();
     }
     
-    tabview html file 
+tabview html file 
+    
     <TabView #tabView androidTabsPosition="bottom" selectedIndex="0" tabBackgroundColor="orangered"  selectedTabTextColor="white" >
 
     <StackLayout *tabItem="{title: 'Home'}" >
@@ -51,13 +56,58 @@ get canGoBack() {
     <StackLayout *tabItem="{title: 'Portfolio'}">
         <page-router-outlet   name="portfolioTab"></page-router-outlet>
     </StackLayout>
-
-   <StackLayout *tabItem="{title: 'Contact'}" >
+    <StackLayout *tabItem="{title: 'Contact'}" >
        <page-router-outlet   name="contactTab" ></page-router-outlet>
-   </StackLayout>
+       </StackLayout>
+       </TabView>
+       
+tabview ts file
 
+import RouterExtensions, ActivatedRoute ,
+import{Page} from 'tns-core-modules/ui/page/page';
+constructor(
+        private router: RouterExtensions,
+        private active: ActivatedRoute,
+        private page: Page,
+        ) {}
+
+    ngOnInit(){
+        console.log('tabview components');
+        this.router.navigate([{outlets: { homeTab: ['home'], aboutTab: ['about'], portfolioTab: ['portfolio'],contactTab: ['contact']  } }],
+        { relativeTo: this.active  }
+        );
+        this.page.actionBarHidden = true;
+    }
     
-</TabView>
+  routing file
+  
+  const routes: Routes = [
+
+    {path:'',
+    component: AuthComponent,
+    pathMatch: "full" }
+    
+    {path: 'tabview', component: TabviewCompnent, 
+    children: [
+
+        {path: 'home', 
+        component: HomeComponent, 
+        outlet: 'homeTab'},
+        
+        {path: 'about', 
+        component: AboutComponent, 
+        outlet: 'aboutTab'},
+        
+        {path: 'portfolio', 
+        component: PortfolioComponent, 
+        outlet: 'portfolioTab'},
+        
+        {path: 'contact', 
+        component: ContactComponent, 
+        outlet: 'contactTab'}
+
+    ]}
+    ];
 
 
 
